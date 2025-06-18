@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const serverAddress = 'sever1000day.aternos.me:39576'; // Địa chỉ server cố định
+    const serverAddress = 'flash.ateex.cloud:19647'; // Địa chỉ server cố định
     const statusResultDiv = document.getElementById('statusResult');
 
     statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
