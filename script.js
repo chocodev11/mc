@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const serverAddress = 'newgenmc.net'; // Địa chỉ server cố định
+    const serverAddress = 'newgenmc.net:25565'; // Địa chỉ server cố định
     const statusResultDiv = document.getElementById('statusResult');
 
     statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
