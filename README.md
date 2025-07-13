@@ -7,7 +7,7 @@ To run this web application, you just need to clone the repository and open the 
 ```git clone <your_repository_url>
 cd newgen-open-checker
 ```
-## Open the index.html file in your browser
+Open the index.html file in your browser
 
 ## Usage
 After opening the application in your browser, you will see the interface for checking NewgenMC's status. The application will automatically display whether NewgenMC is currently open or not.
