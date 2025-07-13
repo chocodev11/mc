@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trạng Thái Server Minecraft</title>
+    <!-- Nhúng file CSS tùy chỉnh của bạn (nếu có) -->
     <link rel="stylesheet" href="style.css">
-    </head>
+</head>
 <body>
     <div class="server-list-container">
         <div class="server-entry">
             <div class="server-header">
-                <span class="header-meta">#1 thế giới</span> <span class="header-address">Newgenmc.net</span>
-                <span class="header-meta">1,3M ❤️</span> </div>
+                <span class="header-meta">#1 thế giới</span>
+                <span class="header-address">Newgenmc.net</span>
+                <span class="header-meta">1,3M ❤️</span>
+            </div>
             <div id="statusResult" class="server-details-box">
                 <p class="loading-message">Đang tải trạng thái server...</p>
             </div>
+            <!-- Thêm nút "Cập nhật ngay" vào đây -->
+            <button id="refreshButton" class="refresh-button">Cập nhật ngay</button>
         </div>
     </div>
+    <!-- Nhúng file JavaScript của bạn -->
     <script src="script.js"></script>
 </body>
 </html>
+
