@@ -1,6 +1,7 @@
 # NEWGEN CHECKER
 NEWGEN OPEN CHECKER is a simple web application developed to check the open status of NewgenMC. This project was created by "Not Staff" with love.
-[Click here...](https://chocodev11.github.io/mc/)
+
+[Click here](https://chocodev11.github.io/mc/)
 ## Installation
 To run this web application, you just need to clone the repository and open the index.html (or similar file name) in your browser.
 
