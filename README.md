@@ -5,9 +5,6 @@ NEWGEN OPEN CHECKER is a simple web application developed to check the open stat
 ## Installation
 To run this web application, you just need to clone the repository and open the index.html (or similar file name) in your browser.
 
-```git clone <your_repository_url>
-cd newgen-open-checker
-```
 Open the index.html file in your browser
 
 ## Usage
