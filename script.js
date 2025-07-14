@@ -1,21 +1,17 @@
-// Đảm bảo mã chạy sau khi DOM đã được tải đầy đủ
 document.addEventListener('DOMContentLoaded', () => {
     const serverAddress = 'newgenmc.asia:25565';
     const statusResultDiv = document.getElementById('statusResult');
     const refreshButton = document.getElementById('refreshButton');
+    const faviconLink = document.getElementById('faviconLink');
 
     async function fetchServerStatus() {
         statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
 
         try {
-            const apiUrl = `https://api.mcsrvstat.us/3/${serverAddress}`;
+            const timestamp = new Date().getTime();
+            const apiUrl = `https://api.mcsrvstat.us/3/${serverAddress}?_=${timestamp}`;
             
-            const response = await fetch(apiUrl, {
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                }
-            });
+            const response = await fetch(apiUrl);
 
             if (!response.ok) {
                 throw new Error(`Lỗi HTTP: ${response.status} ${response.statusText}`);
@@ -27,8 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 let iconHtml = '';
                 if (data.icon) {
                     iconHtml = `<img src="${data.icon}" alt="Server Icon" class="server-icon">`;
+                    if (faviconLink) {
+                        faviconLink.href = data.icon;
+                    }
                 } else {
                     iconHtml = `<img src="https://placehold.co/80x80/cccccc/333333?text=MC" alt="Default Server Icon" class="server-icon">`;
+                    if (faviconLink) {
+                        faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
+                    }
                 }
 
                 let motdHtml = '';
@@ -77,10 +79,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="offline-reason">Lý do: ${data.offline_reason || data.debug?.error?.query || 'Không thể kết nối hoặc server không tồn tại.'}</p>
                     </div>
                 `;
+                if (faviconLink) {
+                    faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
+                }
             }
         } catch (error) {
             console.error('Lỗi khi lấy trạng thái server:', error);
             statusResultDiv.innerHTML = '<p class="offline-message">Đã xảy ra lỗi khi kiểm tra trạng thái server. Vui lòng thử lại sau.</p>';
+            if (faviconLink) {
+                faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
+            }
         }
     }
 
