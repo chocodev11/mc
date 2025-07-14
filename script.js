@@ -5,29 +5,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const faviconLink = document.getElementById('faviconLink');
 
     async function fetchServerStatus() {
-        statusResultDiv.style.transition = 'max-height 0.5s ease-in-out, opacity 0.5s ease-in-out';
+        // Bắt đầu hiệu ứng ẩn nội dung hiện tại (nếu có)
+        statusResultDiv.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
         statusResultDiv.style.overflow = 'hidden';
+        statusResultDiv.style.opacity = '0';
+        statusResultDiv.style.maxHeight = '0px';
 
-        statusResultDiv.style.maxHeight = '50px';
-        statusResultDiv.style.opacity = '1';
-        statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
-
-        try {
-            const timestamp = new Date().getTime();
-            const apiUrl = `https://api.mcsrvstat.us/3/${serverAddress}?_=${timestamp}`;
+        // Chờ hiệu ứng ẩn hoàn tất, sau đó hiển thị thông báo tải
+        setTimeout(async () => {
+            statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
+            statusResultDiv.style.maxHeight = '50px'; // Chiều cao cho thông báo tải
+            statusResultDiv.style.opacity = '1';
             
-            const response = await fetch(apiUrl);
+            // Tắt transition tạm thời để tránh lỗi khi đọc scrollHeight
+            statusResultDiv.style.transition = 'none';
 
-            if (!response.ok) {
-                throw new Error(`Lỗi HTTP: ${response.status} ${response.statusText}`);
-            }
+            try {
+                const timestamp = new Date().getTime();
+                const apiUrl = `https://api.mcsrvstat.us/3/${serverAddress}?_=${timestamp}`;
+                
+                const response = await fetch(apiUrl);
 
-            const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP: ${response.status} ${response.statusText}`);
+                }
 
-            statusResultDiv.style.opacity = '0';
-            statusResultDiv.style.maxHeight = '0px';
+                const data = await response.json();
 
-            setTimeout(() => {
+                let newContentHtml;
                 if (data.online) {
                     let iconHtml = '';
                     if (data.icon) {
@@ -54,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let versionInfo = data.version || (data.protocol && data.protocol.name) || 'N/A';
                     let playersCount = `${data.players.online || '0'} / ${data.players.max || '0'}`;
 
-                    statusResultDiv.innerHTML = `
+                    newContentHtml = `
                         ${iconHtml}
                         <div class="server-info-text">
                             <div class="flex justify-between items-start w-full mb-2">
@@ -80,11 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         </div>
                     `;
-                    statusResultDiv.style.maxHeight = '1000px';
-                    statusResultDiv.style.opacity = '1';
 
                 } else {
-                    statusResultDiv.innerHTML = `
+                    newContentHtml = `
                         <div class="server-offline-message">
                             <p class="offline-message">Server hiện đang offline.</p>
                             <p class="offline-reason">Lý do: ${data.offline_reason || data.debug?.error?.query || 'Không thể kết nối hoặc server không tồn tại.'}</p>
@@ -93,25 +96,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (faviconLink) {
                         faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
                     }
-                    statusResultDiv.style.maxHeight = '200px';
-                    statusResultDiv.style.opacity = '1';
                 }
-            }, 500);
+                
+                // Cập nhật nội dung mới
+                statusResultDiv.innerHTML = newContentHtml;
 
-        } catch (error) {
-            console.error('Lỗi khi lấy trạng thái server:', error);
-            statusResultDiv.style.opacity = '0';
-            statusResultDiv.style.maxHeight = '0px';
+                // Tính toán chiều cao thực tế của nội dung mới để hoạt ảnh chính xác
+                statusResultDiv.style.maxHeight = 'auto'; // Tạm thời đặt auto để lấy scrollHeight
+                const actualHeight = statusResultDiv.scrollHeight + 'px';
+                statusResultDiv.style.maxHeight = '0px'; // Đặt lại 0px để bắt đầu hoạt ảnh
+                statusResultDiv.offsetWidth; // Kích hoạt reflow để trình duyệt nhận ra thay đổi 0px
 
-            setTimeout(() => {
+                // Kích hoạt hoạt ảnh hiển thị nội dung mới
+                statusResultDiv.style.transition = 'max-height 0.5s ease-in-out, opacity 0.5s ease-in-out';
+                statusResultDiv.style.maxHeight = actualHeight;
+                statusResultDiv.style.opacity = '1';
+
+            } catch (error) {
+                console.error('Lỗi khi lấy trạng thái server:', error);
                 statusResultDiv.innerHTML = '<p class="offline-message">Đã xảy ra lỗi khi kiểm tra trạng thái server. Vui lòng thử lại sau.</p>';
                 if (faviconLink) {
                     faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
                 }
-                statusResultDiv.style.maxHeight = '200px';
+
+                // Tính toán chiều cao thực tế cho thông báo lỗi
+                statusResultDiv.style.maxHeight = 'auto';
+                const actualHeight = statusResultDiv.scrollHeight + 'px';
+                statusResultDiv.style.maxHeight = '0px';
+                statusResultDiv.offsetWidth;
+
+                // Kích hoạt hoạt ảnh hiển thị thông báo lỗi
+                statusResultDiv.style.transition = 'max-height 0.5s ease-in-out, opacity 0.5s ease-in-out';
+                statusResultDiv.style.maxHeight = actualHeight;
                 statusResultDiv.style.opacity = '1';
-            }, 500);
-        }
+            }
+        }, 300); // Thời gian chờ bằng với hiệu ứng ẩn (0.3s)
     }
 
     fetchServerStatus();
