@@ -1,17 +1,24 @@
-ddocument.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const serverAddress = 'newgenmc.asia:25565';
     const statusResultDiv = document.getElementById('statusResult');
     const refreshButton = document.getElementById('refreshButton');
     const faviconLink = document.getElementById('faviconLink');
 
     async function fetchServerStatus() {
+        // Bắt đầu hiệu ứng ẩn nội dung hiện tại (nếu có)
+        statusResultDiv.style.transition = 'max-height 0.3s ease-in-out, opacity 0.3s ease-in-out';
+        statusResultDiv.style.overflow = 'hidden';
         statusResultDiv.style.opacity = '0';
         statusResultDiv.style.maxHeight = '0px';
 
+        // Chờ hiệu ứng ẩn hoàn tất, sau đó hiển thị thông báo tải
         setTimeout(async () => {
             statusResultDiv.innerHTML = '<p class="loading-message">Đang tải trạng thái server...</p>';
-            statusResultDiv.style.maxHeight = '50px'; 
+            statusResultDiv.style.maxHeight = '50px'; // Chiều cao cho thông báo tải
             statusResultDiv.style.opacity = '1';
+            
+            // Tắt transition tạm thời để tránh lỗi khi đọc scrollHeight
+            statusResultDiv.style.transition = 'none';
 
             try {
                 const timestamp = new Date().getTime();
@@ -91,12 +98,17 @@ ddocument.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
+                // Cập nhật nội dung mới
                 statusResultDiv.innerHTML = newContentHtml;
 
-                statusResultDiv.style.maxHeight = 'auto';
+                // Tính toán chiều cao thực tế của nội dung mới để hoạt ảnh chính xác
+                statusResultDiv.style.maxHeight = 'auto'; // Tạm thời đặt auto để lấy scrollHeight
                 const actualHeight = statusResultDiv.scrollHeight + 'px';
-                statusResultDiv.style.maxHeight = '0px'; 
-                statusResultDiv.offsetWidth; 
+                statusResultDiv.style.maxHeight = '0px'; // Đặt lại 0px để bắt đầu hoạt ảnh
+                statusResultDiv.offsetWidth; // Kích hoạt reflow để trình duyệt nhận ra thay đổi 0px
+
+                // Kích hoạt hoạt ảnh hiển thị nội dung mới
+                statusResultDiv.style.transition = 'max-height 0.5s ease-in-out, opacity 0.5s ease-in-out';
                 statusResultDiv.style.maxHeight = actualHeight;
                 statusResultDiv.style.opacity = '1';
 
@@ -107,14 +119,18 @@ ddocument.addEventListener('DOMContentLoaded', () => {
                     faviconLink.href = "https://placehold.co/32x32/cccccc/333333?text=MC";
                 }
 
+                // Tính toán chiều cao thực tế cho thông báo lỗi
                 statusResultDiv.style.maxHeight = 'auto';
                 const actualHeight = statusResultDiv.scrollHeight + 'px';
                 statusResultDiv.style.maxHeight = '0px';
                 statusResultDiv.offsetWidth;
+
+                // Kích hoạt hoạt ảnh hiển thị thông báo lỗi
+                statusResultDiv.style.transition = 'max-height 0.5s ease-in-out, opacity 0.5s ease-in-out';
                 statusResultDiv.style.maxHeight = actualHeight;
                 statusResultDiv.style.opacity = '1';
             }
-        }, 300);
+        }, 300); // Thời gian chờ bằng với hiệu ứng ẩn (0.3s)
     }
 
     fetchServerStatus();
